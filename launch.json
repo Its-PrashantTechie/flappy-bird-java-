@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run FlappyBird Game",
+            "request": "launch",
+            "mainClass": "game.Game",
+            "cwd": "${workspaceFolder}/src",
+            "console": "internalConsole"
+        }
+    ]
+}
