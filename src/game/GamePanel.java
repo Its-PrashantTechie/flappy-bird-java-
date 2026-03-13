@@ -11,28 +11,45 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean running = true;
     private boolean gameOver = false;
 
+    private final GameMode mode;
+    private AIController aiController;
+
     // Clouds
     private int cloudX1 = 0;
     private int cloudX2;
     private int cloudSpeed = 1;
 
-    public GamePanel() {
+    public GamePanel(GameMode mode) {
+        this.mode = mode;
         setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
         setBackground(Color.cyan);
         setFocusable(true);
 
         cloudX2 = Constants.WIDTH;
 
-        // Controls
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    if (gameOver) resetGame();
-                    else Bird.jump();
+        if (mode == GameMode.HUMAN) {
+            // Human controls
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        if (gameOver) resetGame();
+                        else Bird.jump();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            // In AI mode, space only restarts after game over (optional)
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE && gameOver) {
+                        resetGame();
+                    }
+                }
+            });
+            aiController = new AIController();
+        }
 
         startGame();
     }
@@ -64,6 +81,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void updateGame() {
         if (!gameOver) {
+            if (mode == GameMode.AI && aiController != null) {
+                aiController.update();
+            }
             Bird.update();
             Pipe.update();
             moveClouds();
