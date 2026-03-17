@@ -69,7 +69,7 @@ public class NeuralNetwork {
     }
 
     /**
-     * Forward pass. Input must have length 5.
+     * Forward pass. Input must have length 6.
      *
      * @param input normalized game state
      * @return probability (0..1) that the bird should jump

@@ -59,6 +59,7 @@ public class PipeManager {
                 p.x = maxX + PIPE_SPACING;
                 int topHeight = rand.nextInt(200) + 100;
                 p.topHeight = topHeight;
+                p.passed = false;
             }
         }
     }

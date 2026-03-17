@@ -11,7 +11,6 @@ public class AIBird {
     public double fitness;
     public boolean alive = true;
     public int pipesPassed = 0;
-    public int lastPassedPipeX = -1;
 
     public AIBird(NeuralNetwork brain, int startX, int startY) {
         this.brain = brain;
@@ -25,7 +24,6 @@ public class AIBird {
         fitness = 0.0;
         alive = true;
         pipesPassed = 0;
-        lastPassedPipeX = -1;
     }
 
     /**

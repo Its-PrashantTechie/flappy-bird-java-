@@ -32,7 +32,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Pipes
     private PipeManager pipeManager;
-    private int lastPassedPipeX = -1;
 
     // Menu button rectangles
     private Rectangle humanModeButton;
@@ -148,7 +147,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
         });
 
-        // Start with menu screen (don't auto-start GA mode anymore)
+        // Start with menu screen
         startGame();
     }
 
@@ -177,7 +176,6 @@ public class GamePanel extends JPanel implements Runnable {
             humanBestScore = playerScore;
         }
         playerScore = 0;
-        lastPassedPipeX = -1;
         playerBird.reset(100, 250);
         pipeManager.reset();
     }
@@ -332,29 +330,32 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void updatePlayerScore() {
         for (Pipe p : pipeManager.getPipes()) {
-            // Check if bird has passed the pipe (bird is to the right of pipe)
-            if (playerBird.x > p.x + p.pipeWidth && p.x + p.pipeWidth > lastPassedPipeX) {
+            // Check if bird has passed the pipe
+            if (!p.passed && playerBird.x > p.x + p.pipeWidth) {
+                p.passed = true;
                 playerScore++;
-                lastPassedPipeX = p.x + p.pipeWidth;
                 break; // Only count one pipe at a time
             }
         }
     }
 
     private void updateAIScores() {
-        for (AIBird ai : aiBirds) {
-            if (!ai.alive) continue;
-            
-            for (Pipe p : pipeManager.getPipes()) {
-                // Check if bird has passed the pipe (bird is to the right of pipe)
-                if (ai.bird.x > p.x + p.pipeWidth && p.x + p.pipeWidth > ai.lastPassedPipeX) {
-                    ai.pipesPassed++;
-                    ai.lastPassedPipeX = p.x + p.pipeWidth;
-                    if (ai.pipesPassed > currentBestScore) {
-                        currentBestScore = ai.pipesPassed;
+        if (aiBirds.isEmpty()) return;
+        int birdX = aiBirds.get(0).bird.x;
+        
+        for (Pipe p : pipeManager.getPipes()) {
+            // Check if bird has passed the pipe
+            if (!p.passed && birdX > p.x + p.pipeWidth) {
+                p.passed = true;
+                for (AIBird ai : aiBirds) {
+                    if (ai.alive) {
+                        ai.pipesPassed++;
+                        if (ai.pipesPassed > currentBestScore) {
+                            currentBestScore = ai.pipesPassed;
+                        }
                     }
-                    break; // Only count one pipe at a time
                 }
+                break; // Only count one pipe at a time
             }
         }
     }
@@ -366,7 +367,6 @@ public class GamePanel extends JPanel implements Runnable {
         generation = 1;
         bestEverFitness = 0.0;
         currentBestScore = 0;
-        lastPassedPipeX = -1;
 
         for (Genome g : population.getGenomes()) {
             aiBirds.add(new AIBird(g.brain.copy(), 100, 250));

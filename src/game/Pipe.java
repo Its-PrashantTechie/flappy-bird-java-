@@ -11,6 +11,7 @@ public class Pipe {
     public int pipeWidth;
     public int gap;
     public int topHeight;
+    public boolean passed = false;
 
     public Pipe(int x, int pipeWidth, int gap, int topHeight) {
         this.x = x;
